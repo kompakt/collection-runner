@@ -11,7 +11,6 @@ namespace Kompakt\CollectionRunner\Subscriber;
 
 use Doctrine\ORM\EntityManager;
 use Kompakt\CollectionRunner\EventNamesInterface;
-use Kompakt\CollectionRunner\Event\EndEvent;
 use Kompakt\CollectionRunner\Event\PageDoneEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -47,11 +46,6 @@ class DoctrineClearer
         $this->em->clear();
     }
 
-    public function onEnd(EndEvent $event)
-    {
-        $this->em->clear();
-    }
-
     protected function handleListeners($add)
     {
         $method = ($add) ? 'addListener' : 'removeListener';
@@ -59,11 +53,6 @@ class DoctrineClearer
         $this->dispatcher->$method(
             $this->eventNames->pageDone(),
             [$this, 'onPageDone']
-        );
-
-        $this->dispatcher->$method(
-            $this->eventNames->end(),
-            [$this, 'onEnd']
         );
     }
 }
