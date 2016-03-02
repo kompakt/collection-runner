@@ -1,0 +1,27 @@
+{
+    "name": "kompakt/collection-runner",
+    "type": "library",
+    "description": "Little helper to run through a collection of things with event-emitting along the way",
+    "authors": [
+        { "name": "Christian Hoegl", "email": "chrigu@sirprize.me" }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "symfony/event-dispatcher": "~2.8|~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.1.*"
+    },
+    "autoload": {
+        "psr-4": { "Kompakt\\CollectionRunner\\": "lib/" }
+    },
+    "suggest": {
+        "symfony/console": "~2.8|~3.0",
+        "doctrine/orm": "^2.5"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    }
+}
