@@ -8,6 +8,50 @@ Through Composer:
 
 + `composer require kompakt/collection-runner`
 
+## Example
+
+Step through a list in portions (pages) of 5 items
+
+```php
+use Kompakt\CollectionRunner\Subscriber\Debugger;
+use Kompakt\CollectionRunner\Runner;
+use Kompakt\CollectionRunner\EventNames;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
+$dispatcher = new EventDispatcher();
+$eventNames = new EventNames();
+$runner = new Runner($dispatcher, $eventNames);
+$debugger = new Debugger($dispatcher, $eventNames);
+$debugger->activate();
+
+$countries = [
+    'Andorra',
+    'Austria',
+    'Australia',
+    'Brazil',
+    'Chile',
+    'Cuba',
+    'Germany',
+    'Finland',
+    'France',
+    'Guatemala',
+    'Italy',
+    'Lebanon',
+    'Morocco',
+    'Nepal',
+    'Russia',
+    'Switzerland',
+    'Thailand'
+];
+
+$getPaginatedCountries = function($first, $max) use ($countries)
+{
+    return array_slice($countries, $first, $max);
+};
+
+$runner->run(count($countries), $getPaginatedCountries, 5);
+```
+
 ## License
 
 kompakt/collection-runner is licensed under the MIT license - see the LICENSE file for details
