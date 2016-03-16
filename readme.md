@@ -44,12 +44,12 @@ $countries = [
     'Thailand'
 ];
 
-$getPaginatedCountries = function($first, $max) use ($countries)
+$getCountriesCallable = function($first, $max) use ($countries)
 {
     return array_slice($countries, $first, $max);
 };
 
-$runner->run(count($countries), $getPaginatedCountries, 5);
+$runner->run(count($countries), $getCountriesCallable, 5);
 ```
 
 ## License

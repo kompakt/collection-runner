@@ -37,7 +37,7 @@ class Runner
         $this->eventNames = $eventNames;
     }
 
-    public function run($numItems, $getItemsFunction, $numItemsPerPage = 1000)
+    public function run($numItems, callable $getItemsCallable, $numItemsPerPage = 1000)
     {
         try {
             if (!$this->start($numItems))
@@ -52,7 +52,8 @@ class Runner
             {
                 $first = $i * $numItemsPerPage;
 
-                $items = $getItemsFunction(
+                $items = call_user_func(
+                    $getItemsCallable,
                     $first,
                     $numItemsPerPage,
                     $numPages,
@@ -93,7 +94,7 @@ class Runner
         }
         catch (\Exception $e)
         {
-            throw new RuntimeException(sprintf('List runner error'), null, $e);
+            throw new RuntimeException(sprintf('Collection runner error'), null, $e);
         }
     }
 
