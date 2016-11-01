@@ -48,32 +48,27 @@ class ErrorLogger
 
     public function onStartError(StartErrorEvent $event)
     {
-        $this->logger->error($event->getException()->getMessage());
+        $this->logger->error($event->getException()->__toString());
     }
 
     public function onPageBeginError(PageBeginErrorEvent $event)
     {
-        $this->logger->error($event->getException()->getMessage());
+        $this->logger->error($event->getException()->__toString());
     }
 
     public function onItemError(ItemErrorEvent $event)
     {
-        $this->logger->error(
-            sprintf(
-                '%s',
-                $event->getException()->getMessage()
-            )
-        );
+        $this->logger->error($event->getException()->__toString());
     }
 
     public function onPageDoneError(PageDoneErrorEvent $event)
     {
-        $this->logger->error($event->getException()->getMessage());
+        $this->logger->error($event->getException()->__toString());
     }
 
     public function onEndError(EndErrorEvent $event)
     {
-        $this->logger->error($event->getException()->getMessage());
+        $this->logger->error($event->getException()->__toString());
     }
 
     protected function handleListeners($add)
