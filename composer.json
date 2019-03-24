@@ -7,7 +7,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "symfony/event-dispatcher": "~2.8|~3.0|~4.0"
+        "symfony/event-dispatcher": "~2.8|~3.0|~4.0",
+        "symfony/console": "~2.8|~3.0|~4.0",
+        "symfony/stopwatch": "~2.8|~3.0|~4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8"
@@ -16,12 +18,11 @@
         "psr-4": { "Kompakt\\CollectionRunner\\": "lib/" }
     },
     "suggest": {
-        "symfony/console": "~2.8|~3.0|~4.0",
         "doctrine/orm": "^2.5"
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1.x-dev"
+            "dev-master": "1.2.x-dev"
         }
     }
 }
