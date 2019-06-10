@@ -7,7 +7,7 @@
  *
  */
 
-namespace Kompakt\CollectionRunner\Console\Subscriber;
+namespace Kompakt\CollectionRunner\Subscriber\Console;
 
 use Kompakt\CollectionRunner\EventNamesInterface;
 use Kompakt\CollectionRunner\Event\EndErrorEvent;
@@ -19,7 +19,7 @@ use Kompakt\CollectionRunner\Event\StartErrorEvent;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class Errors
+class SummaryPrinter
 {
     protected $dispatcher = null;
     protected $eventNames = null;
@@ -41,73 +41,39 @@ class Errors
 
     public function activate(OutputInterface $output)
     {
-        $this->output = $output;
         $this->handleListeners(true);
+        $this->output = $output;
     }
 
     public function deactivate()
     {
         $this->handleListeners(false);
+        $this->output = null;
     }
 
     public function onStartError(StartErrorEvent $event)
     {
         $this->startErrorCount++;
-
-        $this->output->writeln(
-            sprintf(
-                '<error>Start error: "%s"</error>',
-                $event->getException()->getMessage()
-            )
-        );
     }
 
     public function onPageBeginError(PageBeginErrorEvent $event)
     {
         $this->pageBeginErrorCount++;
-
-        $this->output->writeln(
-            sprintf(
-                '<error>PageBegin error: "%s"</error>',
-                $event->getException()->getMessage()
-            )
-        );
     }
 
     public function onItemError(ItemErrorEvent $event)
     {
         $this->itemErrorCount++;
-
-        $this->output->writeln(
-            sprintf(
-                '  <error>Item error: "%s"</error>',
-                $event->getException()->getMessage()
-            )
-        );
     }
 
     public function onPageDoneError(PageDoneErrorEvent $event)
     {
         $this->pageDoneErrorCount++;
-
-        $this->output->writeln(
-            sprintf(
-                '<error>PageDone error: "%s"</error>',
-                $event->getException()->getMessage()
-            )
-        );
     }
 
     public function onEndError(EndErrorEvent $event)
     {
         $this->endErrorCount++;
-
-        $this->output->writeln(
-            sprintf(
-                '<error>End error: "%s"</error>',
-                $event->getException()->getMessage()
-            )
-        );
 
         $this->printSummary();
     }
@@ -119,11 +85,29 @@ class Errors
 
     protected function printSummary()
     {
+        if (
+            !$this->startErrorCount &&
+            !$this->pageBeginErrorCount &&
+            !$this->itemErrorCount &&
+            !$this->pageDoneErrorCount &&
+            !$this->endErrorCount
+        )
+        {
+            return;
+        }
+
+        $this->output->writeln(
+            sprintf(
+                '<comment>%s</comment>',
+                $this->getSeparator()
+            )
+        );
+
         if ($this->startErrorCount)
         {
             $this->output->writeln(
                 sprintf(
-                    '<error>Start errors: %d</error>',
+                    '<error>= Start errors: %d</error>',
                     $this->startErrorCount
                 )
             );
@@ -133,7 +117,7 @@ class Errors
         {
             $this->output->writeln(
                 sprintf(
-                    '<error>PageBegin errors: %d</error>',
+                    '<error>= PageBegin errors: %d</error>',
                     $this->pageBeginErrorCount
                 )
             );
@@ -143,7 +127,7 @@ class Errors
         {
             $this->output->writeln(
                 sprintf(
-                    '<error>Item errors: %d</error>',
+                    '<error>= Item errors: %d</error>',
                     $this->itemErrorCount
                 )
             );
@@ -153,7 +137,7 @@ class Errors
         {
             $this->output->writeln(
                 sprintf(
-                    '<error>PageDone errors: %d</error>',
+                    '<error>= PageDone errors: %d</error>',
                     $this->pageDoneErrorCount
                 )
             );
@@ -163,7 +147,7 @@ class Errors
         {
             $this->output->writeln(
                 sprintf(
-                    '<error>End errors: %d</error>',
+                    '<error>= End errors: %d</error>',
                     $this->endErrorCount
                 )
             );
@@ -203,5 +187,10 @@ class Errors
             $this->eventNames->end(),
             [$this, 'onEnd']
         );
+    }
+
+    protected function getSeparator()
+    {
+        return '---------------------------------------';
     }
 }

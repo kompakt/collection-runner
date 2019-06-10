@@ -7,19 +7,18 @@
  *
  */
 
-namespace Kompakt\CollectionRunner\Console\Subscriber;
+namespace Kompakt\CollectionRunner\Subscriber\Console;
 
 use Kompakt\CollectionRunner\EventNamesInterface;
-use Kompakt\CollectionRunner\Event\ItemEvent;
-use Symfony\Component\Console\Helper\ProgressBar as SymfonyProgressBar;
+use Kompakt\CollectionRunner\Event\PageDoneEvent;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProgressAdvancer
+class PageDoneMemory
 {
     protected $dispatcher = null;
     protected $eventNames = null;
-    protected $progressBar = null;
+    protected $output = null;
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
@@ -30,9 +29,9 @@ class ProgressAdvancer
         $this->eventNames = $eventNames;
     }
 
-    public function activate(SymfonyProgressBar $progressBar)
+    public function activate(OutputInterface $output)
     {
-        $this->progressBar = $progressBar;
+        $this->output = $output;
         $this->handleListeners(true);
     }
 
@@ -41,9 +40,14 @@ class ProgressAdvancer
         $this->handleListeners(false);
     }
 
-    public function onItem(ItemEvent $event)
+    public function onPageDone(PageDoneEvent $event)
     {
-        $this->progressBar->advance();
+        $this->output->writeln(
+            sprintf(
+                '<info>Memory: %s Mb</info>',
+                round(memory_get_usage() / 1024 / 1024, 0)
+            )
+        );
     }
 
     protected function handleListeners($add)
@@ -51,8 +55,8 @@ class ProgressAdvancer
         $method = ($add) ? 'addListener' : 'removeListener';
 
         $this->dispatcher->$method(
-            $this->eventNames->item(),
-            [$this, 'onItem']
+            $this->eventNames->pageDone(),
+            [$this, 'onPageDone']
         );
     }
 }

@@ -7,20 +7,20 @@
  *
  */
 
-namespace Kompakt\CollectionRunner\Console\Subscriber;
+namespace Kompakt\CollectionRunner\Subscriber;
 
 use Kompakt\CollectionRunner\EventNamesInterface;
-use Kompakt\CollectionRunner\Event\ItemEvent;
 use Kompakt\CollectionRunner\Event\EndEvent;
-use Symfony\Component\Console\Helper\ProgressBar as SymfonyProgressBar;
-use Symfony\Component\Console\Output\OutputInterface;
+use Kompakt\CollectionRunner\Event\ItemEvent;
+use Kompakt\CollectionRunner\Event\PageBeginEvent;
+use Kompakt\CollectionRunner\Event\PageDoneEvent;
+use Kompakt\CollectionRunner\Event\StartEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProgressBar
+class ErrorMaker
 {
     protected $dispatcher = null;
     protected $eventNames = null;
-    protected $progressBar = null;
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
@@ -31,9 +31,8 @@ class ProgressBar
         $this->eventNames = $eventNames;
     }
 
-    public function activate(OutputInterface $output, $numItems)
+    public function activate()
     {
-        $this->progressBar = new SymfonyProgressBar($output, $numItems);
         $this->handleListeners(true);
     }
 
@@ -42,24 +41,29 @@ class ProgressBar
         $this->handleListeners(false);
     }
 
+    public function onStart(StartEvent $event)
+    {
+        #throw new \Exception('Start');
+    }
+
+    public function onPageBegin(PageBeginEvent $event)
+    {
+        #throw new \Exception('PageBegin');
+    }
+
     public function onItem(ItemEvent $event)
     {
-        if (!$this->progressBar)
-        {
-            return;
-        }
+        throw new \Exception('Item');
+    }
 
-        $this->progressBar->advance();
+    public function onPageDone(PageDoneEvent $event)
+    {
+        throw new \Exception('PageDone');
     }
 
     public function onEnd(EndEvent $event)
     {
-        if (!$this->progressBar)
-        {
-            return;
-        }
-
-        $this->progressBar->finish();
+        throw new \Exception('End');
     }
 
     protected function handleListeners($add)
@@ -67,8 +71,23 @@ class ProgressBar
         $method = ($add) ? 'addListener' : 'removeListener';
 
         $this->dispatcher->$method(
+            $this->eventNames->start(),
+            [$this, 'onStart']
+        );
+
+        $this->dispatcher->$method(
+            $this->eventNames->pageBegin(),
+            [$this, 'onPageBegin']
+        );
+
+        $this->dispatcher->$method(
             $this->eventNames->item(),
             [$this, 'onItem']
+        );
+
+        $this->dispatcher->$method(
+            $this->eventNames->pageDone(),
+            [$this, 'onPageDone']
         );
 
         $this->dispatcher->$method(

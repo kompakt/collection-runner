@@ -7,21 +7,20 @@
  *
  */
 
-namespace Kompakt\CollectionRunner\Console\Subscriber;
+namespace Kompakt\CollectionRunner\Subscriber\Console;
 
 use Kompakt\CollectionRunner\EventNamesInterface;
+use Kompakt\CollectionRunner\Event\ItemEvent;
 use Kompakt\CollectionRunner\Event\EndEvent;
-use Kompakt\CollectionRunner\Event\StartEvent;
+use Symfony\Component\Console\Helper\ProgressBar as SymfonyProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Stopwatch\Stopwatch as SymfonyStopwatch;
 
-class Stopwatch
+class ProgressBar
 {
     protected $dispatcher = null;
     protected $eventNames = null;
-    protected $stopwatch = null;
-    protected $output = null;
+    protected $progressBar = null;
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
@@ -30,29 +29,28 @@ class Stopwatch
     {
         $this->dispatcher = $dispatcher;
         $this->eventNames = $eventNames;
-        $this->stopwatch = new SymfonyStopwatch();
     }
 
-    public function activate(OutputInterface $output)
+    public function activate(OutputInterface $output, $numItems)
     {
-        $this->output = $output;
         $this->handleListeners(true);
+        $this->progressBar = new SymfonyProgressBar($output, $numItems);
     }
 
     public function deactivate()
     {
         $this->handleListeners(false);
+        $this->progressBar = null;
     }
 
-    public function onStart(StartEvent $event)
+    public function onItem(ItemEvent $event)
     {
-        $this->stopwatch->start('CollectionRunner::Stopwatch', 'collection-runner');
+        $this->progressBar->advance();
     }
 
     public function onEnd(EndEvent $event)
     {
-        $event = $this->stopwatch->stop('CollectionRunner::Stopwatch');
-        $this->output->writeln(sprintf('<info>%s</info>', $event));
+        $this->progressBar->finish();
     }
 
     protected function handleListeners($add)
@@ -60,8 +58,8 @@ class Stopwatch
         $method = ($add) ? 'addListener' : 'removeListener';
 
         $this->dispatcher->$method(
-            $this->eventNames->start(),
-            [$this, 'onStart']
+            $this->eventNames->item(),
+            [$this, 'onItem']
         );
 
         $this->dispatcher->$method(

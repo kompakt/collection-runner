@@ -7,9 +7,10 @@
  *
  */
 
-use Kompakt\CollectionRunner\Subscriber\Debugger;
+use Kompakt\CollectionRunner\Console\Subscriber\Debugger;
 use Kompakt\CollectionRunner\Runner;
 use Kompakt\CollectionRunner\EventNames;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 require sprintf('%s/bootstrap.php', __DIR__);
@@ -18,7 +19,7 @@ $dispatcher = new EventDispatcher();
 $eventNames = new EventNames();
 $runner = new Runner($dispatcher, $eventNames);
 $debugger = new Debugger($dispatcher, $eventNames);
-$debugger->activate();
+$debugger->activate(new ConsoleOutput());
 
 $countries = [
     'Andorra',

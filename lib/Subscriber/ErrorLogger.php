@@ -27,23 +27,23 @@ class ErrorLogger
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
-        EventNamesInterface $eventNames,
-        Logger $logger
+        EventNamesInterface $eventNames
     )
     {
         $this->dispatcher = $dispatcher;
         $this->eventNames = $eventNames;
-        $this->logger = $logger;
     }
 
-    public function activate()
+    public function activate(Logger $logger)
     {
         $this->handleListeners(true);
+        $this->logger = $logger;
     }
 
     public function deactivate()
     {
         $this->handleListeners(false);
+        $this->logger = null;
     }
 
     public function onStartError(StartErrorEvent $event)

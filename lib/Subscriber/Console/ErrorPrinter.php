@@ -7,25 +7,22 @@
  *
  */
 
-namespace Kompakt\CollectionRunner\Subscriber;
+namespace Kompakt\CollectionRunner\Subscriber\Console;
 
 use Kompakt\CollectionRunner\EventNamesInterface;
 use Kompakt\CollectionRunner\Event\EndErrorEvent;
-use Kompakt\CollectionRunner\Event\EndEvent;
 use Kompakt\CollectionRunner\Event\ItemErrorEvent;
-use Kompakt\CollectionRunner\Event\ItemEvent;
 use Kompakt\CollectionRunner\Event\PageBeginErrorEvent;
-use Kompakt\CollectionRunner\Event\PageBeginEvent;
 use Kompakt\CollectionRunner\Event\PageDoneErrorEvent;
-use Kompakt\CollectionRunner\Event\PageDoneEvent;
 use Kompakt\CollectionRunner\Event\StartErrorEvent;
-use Kompakt\CollectionRunner\Event\StartEvent;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class Debugger
+class ErrorPrinter
 {
     protected $dispatcher = null;
     protected $eventNames = null;
+    protected $output = null;
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
@@ -36,8 +33,9 @@ class Debugger
         $this->eventNames = $eventNames;
     }
 
-    public function activate()
+    public function activate(OutputInterface $output)
     {
+        $this->output = $output;
         $this->handleListeners(true);
     }
 
@@ -46,96 +44,51 @@ class Debugger
         $this->handleListeners(false);
     }
 
-    public function onStart(StartEvent $event)
-    {
-        $this->writeln(
-            sprintf(
-                '+ DEBUG: Start'
-            )
-        );
-    }
-
     public function onStartError(StartErrorEvent $event)
     {
-        $this->writeln(
+        $this->output->writeln(
             sprintf(
-                '+ DEBUG: Start error %s',
+                '<error>Collection Start error %s</error>',
                 $event->getException()->getMessage()
-            )
-        );
-    }
-
-    public function onPageBegin(PageBeginEvent $event)
-    {
-        $this->writeln(
-            sprintf(
-                '+ DEBUG: PageBegin'
             )
         );
     }
 
     public function onPageBeginError(PageBeginErrorEvent $event)
     {
-        $this->writeln(
+        $this->output->writeln(
             sprintf(
-                '+ DEBUG: PageBegin error %s',
+                '<error>Collection PageBegin error %s</error>',
                 $event->getException()->getMessage()
-            )
-        );
-    }
-
-    public function onItem(ItemEvent $event)
-    {
-        $this->writeln(
-            sprintf(
-                '  + DEBUG: Item'
             )
         );
     }
 
     public function onItemError(ItemErrorEvent $event)
     {
-        $this->writeln(
+        $this->output->writeln(
             sprintf(
-                '  ! DEBUG: Item error: %s',
+                '<error>! DEBUG: Item error: %s</error>',
                 $event->getException()->getMessage()
-            )
-        );
-    }
-
-    public function onPageDone(PageDoneEvent $event)
-    {
-        $this->writeln(
-            sprintf(
-                '+ DEBUG: PageDone'
             )
         );
     }
 
     public function onPageDoneError(PageDoneErrorEvent $event)
     {
-        $this->writeln(
+        $this->output->writeln(
             sprintf(
-                '+ DEBUG: PageDone error %s',
+                '<error>Collection PageDone error %s</error>',
                 $event->getException()->getMessage()
-            )
-        );
-    }
-
-    public function onEnd(EndEvent $event)
-    {
-        $this->writeln(
-            sprintf(
-                '+ DEBUG: End'
             )
         );
     }
 
     public function onEndError(EndErrorEvent $event)
     {
-        $this->writeln(
+        $this->output->writeln(
             sprintf(
-                '+ DEBUG: End error %s',
+                '<error>Collection End error %s</error>',
                 $event->getException()->getMessage()
             )
         );
@@ -146,18 +99,8 @@ class Debugger
         $method = ($add) ? 'addListener' : 'removeListener';
 
         $this->dispatcher->$method(
-            $this->eventNames->start(),
-            [$this, 'onStart']
-        );
-
-        $this->dispatcher->$method(
             $this->eventNames->startError(),
             [$this, 'onStartError']
-        );
-
-        $this->dispatcher->$method(
-            $this->eventNames->pageBegin(),
-            [$this, 'onPageBegin']
         );
 
         $this->dispatcher->$method(
@@ -166,18 +109,8 @@ class Debugger
         );
 
         $this->dispatcher->$method(
-            $this->eventNames->item(),
-            [$this, 'onItem']
-        );
-
-        $this->dispatcher->$method(
             $this->eventNames->itemError(),
             [$this, 'onItemError']
-        );
-
-        $this->dispatcher->$method(
-            $this->eventNames->pageDone(),
-            [$this, 'onPageDone']
         );
 
         $this->dispatcher->$method(
@@ -186,18 +119,8 @@ class Debugger
         );
 
         $this->dispatcher->$method(
-            $this->eventNames->end(),
-            [$this, 'onEnd']
-        );
-
-        $this->dispatcher->$method(
             $this->eventNames->endError(),
             [$this, 'onEndError']
         );
-    }
-
-    protected function writeln($msg)
-    {
-        echo sprintf("%s\n", $msg);
     }
 }

@@ -7,7 +7,7 @@
  *
  */
 
-namespace Kompakt\CollectionRunner\Console\Subscriber;
+namespace Kompakt\CollectionRunner\Subscriber\Console;
 
 use Kompakt\CollectionRunner\EventNamesInterface;
 use Kompakt\CollectionRunner\Event\EndErrorEvent;
@@ -40,20 +40,21 @@ class Debugger
 
     public function activate(OutputInterface $output)
     {
-        $this->output = $output;
         $this->handleListeners(true);
+        $this->output = $output;
     }
 
     public function deactivate()
     {
         $this->handleListeners(false);
+        $this->output = null;
     }
 
     public function onStart(StartEvent $event)
     {
         $this->output->writeln(
             sprintf(
-                '<info>+ DEBUG: Start</info>'
+                '<info>COLLECTION DEBUG: Start</info>'
             )
         );
     }
@@ -62,7 +63,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<error>+ DEBUG: Start error %s</error>',
+                '<error>COLLECTION DEBUG: Start error %s</error>',
                 $event->getException()->getMessage()
             )
         );
@@ -72,7 +73,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<info>+ DEBUG: PageBegin</info>'
+                '<info>COLLECTION DEBUG: PageBegin</info>'
             )
         );
     }
@@ -81,7 +82,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<error>+ DEBUG: Page Begin error %s</error>',
+                '<error>COLLECTION DEBUG: Page Begin error %s</error>',
                 $event->getException()->getMessage()
             )
         );
@@ -91,7 +92,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '  <info>+ DEBUG: Item</info>',
+                '<info>COLLECTION DEBUG: Item</info>',
                 $event->getItem()
             )
         );
@@ -101,7 +102,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '  <error>! DEBUG: Item error: %s</error>',
+                '<error>! DEBUG: Item error: %s</error>',
                 $event->getException()->getMessage()
             )
         );
@@ -111,7 +112,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<info>+ DEBUG: PageDone</info>'
+                '<info>COLLECTION DEBUG: PageDone</info>'
             )
         );
     }
@@ -120,7 +121,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<error>+ DEBUG: PageDone error %s</error>',
+                '<error>COLLECTION DEBUG: PageDone error %s</error>',
                 $event->getException()->getMessage()
             )
         );
@@ -130,7 +131,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<info>+ DEBUG: End</info>'
+                '<info>COLLECTION DEBUG: End</info>'
             )
         );
     }
@@ -139,7 +140,7 @@ class Debugger
     {
         $this->output->writeln(
             sprintf(
-                '<error>+ DEBUG: End error %s</error>',
+                '<error>COLLECTION DEBUG: End error %s</error>',
                 $event->getException()->getMessage()
             )
         );
