@@ -68,7 +68,7 @@ class ErrorPrinter
     {
         $this->output->writeln(
             sprintf(
-                '<error>! DEBUG: Item error: %s</error>',
+                '<error>Collection Item error: %s</error>',
                 $event->getException()->getMessage()
             )
         );
