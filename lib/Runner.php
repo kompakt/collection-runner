@@ -102,8 +102,8 @@ class Runner
     {
         try {
             $this->dispatcher->dispatch(
-                $this->eventNames->start(),
-                new StartEvent($numItems)
+                new StartEvent($numItems),
+                $this->eventNames->start()
             );
 
             return true;
@@ -111,8 +111,8 @@ class Runner
         catch (\Exception $e)
         {
             $this->dispatcher->dispatch(
-                $this->eventNames->startError(),
-                new StartErrorEvent($e, $numItems)
+                new StartErrorEvent($e, $numItems),
+                $this->eventNames->startError()
             );
 
             return false;
@@ -123,8 +123,8 @@ class Runner
     {
         try {
             $this->dispatcher->dispatch(
-                $this->eventNames->pageBegin(),
-                new PageBeginEvent($items, $first, $max, $numPages, $currentPage)
+                new PageBeginEvent($items, $first, $max, $numPages, $currentPage),
+                $this->eventNames->pageBegin()
             );
 
             return true;
@@ -132,8 +132,8 @@ class Runner
         catch (\Exception $e)
         {
             $this->dispatcher->dispatch(
-                $this->eventNames->pageBeginError(),
-                new PageBeginErrorEvent($e, $items, $first, $max, $numPages, $currentPage)
+                new PageBeginErrorEvent($e, $items, $first, $max, $numPages, $currentPage),
+                $this->eventNames->pageBeginError()
             );
 
             return false;
@@ -144,8 +144,8 @@ class Runner
     {
         try {
             $this->dispatcher->dispatch(
-                $this->eventNames->item(),
-                new ItemEvent($item)
+                new ItemEvent($item),
+                $this->eventNames->item()
             );
 
             return true;
@@ -153,8 +153,8 @@ class Runner
         catch (\Exception $e)
         {
             $this->dispatcher->dispatch(
-                $this->eventNames->itemError(),
-                new ItemErrorEvent($e, $item)
+                new ItemErrorEvent($e, $item),
+                $this->eventNames->itemError()
             );
 
             return false;
@@ -165,8 +165,8 @@ class Runner
     {
         try {
             $this->dispatcher->dispatch(
-                $this->eventNames->pageDone(),
-                new PageDoneEvent($items, $first, $max, $numPages, $currentPage)
+                new PageDoneEvent($items, $first, $max, $numPages, $currentPage),
+                $this->eventNames->pageDone()
             );
 
             return true;
@@ -174,8 +174,8 @@ class Runner
         catch (\Exception $e)
         {
             $this->dispatcher->dispatch(
-                $this->eventNames->pageDoneError(),
-                new PageDoneErrorEvent($e, $items, $first, $max, $numPages, $currentPage)
+                new PageDoneErrorEvent($e, $items, $first, $max, $numPages, $currentPage),
+                $this->eventNames->pageDoneError()
             );
 
             return false;
@@ -186,8 +186,8 @@ class Runner
     {
         try {
             $this->dispatcher->dispatch(
-                $this->eventNames->end(),
-                new EndEvent()
+                new EndEvent(),
+                $this->eventNames->end()
             );
 
             return true;
@@ -195,8 +195,8 @@ class Runner
         catch (\Exception $e)
         {
             $this->dispatcher->dispatch(
-                $this->eventNames->endError(),
-                new EndErrorEvent($e)
+                new EndErrorEvent($e),
+                $this->eventNames->endError()
             );
 
             return false;

@@ -9,7 +9,7 @@
 
 namespace Kompakt\CollectionRunner\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PageBeginEvent extends Event
 {
