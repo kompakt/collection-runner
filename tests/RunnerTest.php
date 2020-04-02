@@ -2,7 +2,9 @@
 
 namespace Kompakt\CollectionRunner\Tests;
 
-class RunnerTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RunnerTest extends TestCase
 {
     public function testStandard()
     {
